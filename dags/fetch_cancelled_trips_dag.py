@@ -17,16 +17,16 @@ default_args = {
 
 # Define the DAG
 dag = DAG(
-    'fetch_alerts_dag',
+    'fetch_cancelled_trips_dag',
     default_args=default_args,
     description='A DAG to fetch alert data from an API',
-    schedule_interval=timedelta(hours=2),
+    schedule_interval=timedelta(hours=1),
     catchup=False,
 )
 
 # Define the task
 fetch_task = PythonOperator(
-    task_id='fetch_alert_data',
+    task_id='fetch_cancelled_trip_data',
     python_callable= get_alert_data,
     dag=dag,
 )
