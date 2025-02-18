@@ -1,7 +1,8 @@
+from string import Template
 def stop_data_query():
     return """ {
     stops {
-        id,
+        id
         gtfsId
         name
         lat
@@ -11,8 +12,8 @@ def stop_data_query():
     }
     """
 
-def cancelled_trips_query(start_cursor = None):
-    return """{canceledTrips(first: 1000) {
+def cancelled_trips_query(after = None):
+    return Template("""{canceledTrips(first: 1000, after: $after) {
     pageInfo {
       hasNextPage
       endCursor
@@ -70,8 +71,7 @@ def cancelled_trips_query(start_cursor = None):
       }
     }
   }
-  }
-}"""
+}""").substitute({'after': "null" if after is None else after})
 
 def distruptions_query():
     return """ {
@@ -81,6 +81,7 @@ def distruptions_query():
         alertUrl
         effectiveStartDate
         effectiveEndDate
+        id
         entities {
           __typename
           ... on Route {

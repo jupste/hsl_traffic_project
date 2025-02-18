@@ -32,6 +32,11 @@ class DatabaseConnector:
         except Exception as error:
             print(f"Error fetching data: {error}")
 
+    def commit(self):
+        if self.connection:
+            self.connection.commit()
+            print("Data committed!")
+
     def close(self):
         if self.connection:
             self.connection.close()
