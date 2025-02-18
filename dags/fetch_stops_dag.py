@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from datetime import datetime, timedelta
-from scripts.data_ingestion import get_canceled_trip_data
+from scripts.data_ingestion import get_stops_data
 
 # Default arguments for the DAG
 default_args = {
@@ -27,7 +27,7 @@ dag = DAG(
 # Define the task
 fetch_task = PythonOperator(
     task_id='fetch_stops_data',
-    python_callable= get_canceled_trip_data,
+    python_callable= get_stops_data,
     dag=dag,
 )
 
