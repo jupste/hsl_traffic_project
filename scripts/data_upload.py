@@ -41,10 +41,7 @@ def compare_md5(file1, file2):
     # Compare the checksums
     return md5_file1 == md5_file2
 
-def load_json_to_db(json_file_path, table_name):
-    # Read JSON file
-    with open(json_file_path, 'r') as file:
-        data = json.load(file)
+def load_json_to_db(data, table_name):
 
     # Connect to the database
     connection = DatabaseConnector()
@@ -66,13 +63,41 @@ def load_stops_data_to_db():
     newest_raw = get_newest_file(f"{env.DATA_PATH}/raw/stops")
     newest_processed = get_newest_file(f"{env.DATA_PATH}/processed/stops")
     # Don't do anything if the contents of the files are the same
-    """
     if compare_md5(newest_raw, newest_processed):
         return
-    """
     # iterate over files in that directory
     for root, dirs, files in os.walk(f"{env.DATA_PATH}/raw/stops/"):
         for filename in files:
             file_path = os.path.join(root, filename)
-            load_json_to_db(file_path, "stops")
+            # Read JSON file
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            load_json_to_db(data, "stops")
             move_file_to_processed(file_path, f"{env.DATA_PATH}/processed/stops")
+
+def load_alerts_data_to_db():
+    for root, dirs, files in os.walk(f"{env.DATA_PATH}/raw/alerts/"):
+        for filename in files:
+            file_path = os.path.join(root, filename)
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            # Extract entities from data
+            entities_data = {'data': {'entities': []}}
+            for alert in data['data']['alerts']:
+                if 'entities' in alert:
+                    for entity in alert['entities']:
+                        entity['alertId'] = alert['id']
+                        if "gtfsId" not in entity:
+                            entity["gtfsId"] = None
+                        entities_data['data']['entities'].append(entity)
+                    alert.pop('entities')
+            # Load alerts data
+            load_json_to_db(data, "alerts")
+            # Load alert entities data
+            load_json_to_db(entities_data, "entities")
+            move_file_to_processed(file_path, f"{env.DATA_PATH}/processed/stops")
+
+
+
+def load_cancelled_trips_data_to_db():
+    pass
