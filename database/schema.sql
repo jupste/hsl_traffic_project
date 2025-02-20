@@ -16,3 +16,9 @@ CREATE TABLE stops (
     zoneid TEXT,            --
 );
 
+CREATE TABLE stops_entities (
+    __typename TEXT NOT NULL,
+    gtfsid TEXT,
+    alertId TEXT NOT NULL,
+    PRIMARY KEY (__typename, gtfsid, alertId)
+)

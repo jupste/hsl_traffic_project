@@ -82,7 +82,7 @@ def load_alerts_data_to_db():
             with open(file_path, 'r') as file:
                 data = json.load(file)
             # Extract entities from data
-            entities_data = {'data': {'entities': []}}
+            entities_data = {'data': {'stops_entities': []}}
             for alert in data['data']['alerts']:
                 if 'entities' in alert:
                     for entity in alert['entities']:
@@ -94,7 +94,7 @@ def load_alerts_data_to_db():
             # Load alerts data
             load_json_to_db(data, "alerts")
             # Load alert entities data
-            load_json_to_db(entities_data, "entities")
+            load_json_to_db(entities_data, "stops_entities")
             move_file_to_processed(file_path, f"{env.DATA_PATH}/processed/stops")
 
 
