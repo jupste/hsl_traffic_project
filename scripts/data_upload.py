@@ -41,16 +41,15 @@ def compare_md5(file1, file2):
     # Compare the checksums
     return md5_file1 == md5_file2
 
-def load_json_to_db(data, table_name):
+def load_json_to_db(data, table_name, id_column = "id"):
 
     # Connect to the database
     connection = DatabaseConnector()
     connection.connect()
-
     # Extract values from the JSON data
     columns = data["data"][table_name][0].keys()
     values = [tuple(row.values()) for row in data["data"][table_name]]
-    query = f"INSERT INTO {table_name} ({', '.join(columns)}) VALUES {', '.join([str(val) for val in values])} ON CONFLICT (id) DO NOTHING"
+    query = f"INSERT INTO {table_name} ({', '.join(columns)}) VALUES {', '.join([str(val) for val in values])} ON CONFLICT ({id_column}) DO NOTHING"
     # Insert data into the database
     connection.execute_query(query, params=None)
     connection.commit()
@@ -82,20 +81,20 @@ def load_alerts_data_to_db():
             with open(file_path, 'r') as file:
                 data = json.load(file)
             # Extract entities from data
-            entities_data = {'data': {'stops_entities': []}}
+            entities_data = {'data': {'alerts_entities': []}}
             for alert in data['data']['alerts']:
                 if 'entities' in alert:
                     for entity in alert['entities']:
                         entity['alertId'] = alert['id']
                         if "gtfsId" not in entity:
-                            entity["gtfsId"] = None
-                        entities_data['data']['entities'].append(entity)
+                            entity["gtfsId"] = "NA"
+                        entities_data['data']['alerts_entities'].append(entity)
                     alert.pop('entities')
             # Load alerts data
             load_json_to_db(data, "alerts")
             # Load alert entities data
-            load_json_to_db(entities_data, "stops_entities")
-            move_file_to_processed(file_path, f"{env.DATA_PATH}/processed/stops")
+            load_json_to_db(entities_data, "alerts_entities", id_column = "__typename, gtfsid, alertId")
+            move_file_to_processed(file_path, f"{env.DATA_PATH}/processed/alerts")
 
 
 

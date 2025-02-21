@@ -3,8 +3,8 @@ CREATE TABLE alerts (
     alertheadertext TEXT NOT NULL,  -- Short title or summary of the alert
     alertdescriptiontext TEXT,      -- Full description of the alert
     alerturl TEXT,                   -- Optional URL with more details
-    effectivestartdate TIMESTAMP,   -- When the alert starts
-    effectiveenddate TIMESTAMP      -- When the alert ends
+    effectivestartdate INTEGER,   -- When the alert starts
+    effectiveenddate INTEGER      -- When the alert ends
 );
 
 CREATE TABLE stops (
@@ -16,7 +16,7 @@ CREATE TABLE stops (
     zoneid TEXT,            --
 );
 
-CREATE TABLE stops_entities (
+CREATE TABLE alerts_entities (
     __typename TEXT NOT NULL,
     gtfsid TEXT,
     alertId TEXT NOT NULL,
